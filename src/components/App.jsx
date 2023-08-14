@@ -13,12 +13,22 @@ import { useEffect } from 'react';
 export const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
-  console.log(contacts, 'DEBUG 1');
+  const [prevContactsLength, setPrevContactsLength] = useState(0);
 
   useEffect(() => {
     const storageContacts = JSON.parse(window.localStorage.getItem('CONTACTS'));
-    setContacts([...storageContacts]);
+    if (storageContacts) {
+      setContacts([...storageContacts]);
+      setPrevContactsLength(storageContacts.length);
+    }
   }, []);
+
+  useEffect(() => {
+    if (contacts.length !== prevContactsLength) {
+      window.localStorage.setItem('CONTACTS', JSON.stringify(contacts));
+      setPrevContactsLength(contacts.length);
+    }
+  }, [contacts, prevContactsLength]);
 
   const handleAddContact = contact => {
     const contactExists = contacts.some(
@@ -33,7 +43,6 @@ export const App = () => {
     // тут мы передаем обьект контакт который представляет собой объект, который содержит информацию о новом контакте, который нужно добавить.
     const id = nanoid();
 
-    window.localStorage.setItem('CONTACTS', JSON.stringify(contacts));
     setContacts(prev => {
       return [
         ...prev,
@@ -45,22 +54,20 @@ export const App = () => {
     });
   };
 
+  const handleDeleteContact = id => {
+    const updatedContacts = contacts.filter(contact => contact.id !== id);
+
+    setContacts(updatedContacts);
+  };
+
   const handleFilterChange = filterValue => {
     setFilter(filterValue);
   };
 
   const getfilteredContacts = () => {
-    console.log(contacts);
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
-  };
-
-  const handleDeleteContact = id => {
-    const updatedContacts = contacts.filter(contact => contact.id !== id);
-
-    setContacts(updatedContacts);
-    localStorage.setItem('CONTACTS', JSON.stringify(updatedContacts));
   };
 
   const filteredContacts = getfilteredContacts();
