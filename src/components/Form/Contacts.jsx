@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { ContactList, ContactItem, DeleteButton } from './Form.styled';
 
 export const Contacts = ({ options, onDeleteContact }) => {
-  console.log(options, '<');
   return (
     <ContactList>
       {options.map(({ id, name, number }) => (
