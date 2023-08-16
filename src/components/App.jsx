@@ -13,22 +13,16 @@ import { useEffect } from 'react';
 export const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
-  const [prevContactsLength, setPrevContactsLength] = useState(0);
 
   useEffect(() => {
     const storageContacts = JSON.parse(window.localStorage.getItem('CONTACTS'));
-    if (storageContacts) {
-      setContacts([...storageContacts]);
-      setPrevContactsLength(storageContacts.length);
+    if (storageContacts.length) {
+      setContacts(storageContacts);
     }
   }, []);
-
   useEffect(() => {
-    if (contacts.length !== prevContactsLength) {
-      window.localStorage.setItem('CONTACTS', JSON.stringify(contacts));
-      setPrevContactsLength(contacts.length);
-    }
-  }, [contacts, prevContactsLength]);
+    window.localStorage.setItem('CONTACTS', JSON.stringify(contacts));
+  }, [contacts]);
 
   const handleAddContact = contact => {
     const contactExists = contacts.some(
